@@ -1,0 +1,22 @@
+{
+    "name": "verse/verse_example",
+    "description": "@vetermanve personal site built upon Verse Framework",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Denisov Mikhail",
+            "email": "manwebdev@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "" : "src/"    
+        }
+    },
+    "require": {
+        "verse/run" : "^0.0.3",
+        "twig/twig": "^2.5"
+    },
+    "minimum-stability" : "stable"
+}
