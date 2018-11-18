@@ -393,16 +393,16 @@
         },
         {
             "name": "verse/modular",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vetermanve/verse_modular.git",
-                "reference": "40cb609114752da41e1520f7440150ec6b372454"
+                "reference": "e9ae6cef29b8bea4c109908c94f751f862a3a21d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vetermanve/verse_modular/zipball/40cb609114752da41e1520f7440150ec6b372454",
-                "reference": "40cb609114752da41e1520f7440150ec6b372454",
+                "url": "https://api.github.com/repos/vetermanve/verse_modular/zipball/e9ae6cef29b8bea4c109908c94f751f862a3a21d",
+                "reference": "e9ae6cef29b8bea4c109908c94f751f862a3a21d",
                 "shasum": ""
             },
             "require": {
@@ -425,7 +425,7 @@
                 }
             ],
             "description": "Verse Modular is a micro framework for developing modular pipelines of code execution.",
-            "time": "2018-09-05T09:22:30+00:00"
+            "time": "2018-10-04T11:06:59+00:00"
         },
         {
             "name": "verse/router",
