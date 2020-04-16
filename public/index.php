@@ -3,7 +3,7 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 use Base\Render\RenderSetupComponent;
-use Verse\Run\Processor\SimplePageProcessor;
+use Base\Run\RoutingProcessor;
 use Verse\Run\RunContext;
 use Verse\Run\RunCore;
 use Verse\Run\RuntimeLog;
@@ -22,7 +22,7 @@ $env->fill([
 
 
 $schema = new RegularHttpRequestSchema();
-$schema->setProcessor(new SimplePageProcessor());
+$schema->setProcessor(new RoutingProcessor());
 $schema->setHttpEnv($env);
 $schema->addComponent(new RenderSetupComponent());
 
@@ -37,6 +37,7 @@ $context->fill([
 $context->set(RunContext::GLOBAL_CONFIG, []);
 
 $runtime = new RuntimeLog($context->get(RunContext::IDENTITY));
+$runtime->pushHandler(new \Monolog\Handler\RotatingFileHandler(dirname(__DIR__).'/logs/out.log'));
 $runtime->catchErrors();
 
 $core = new RunCore();

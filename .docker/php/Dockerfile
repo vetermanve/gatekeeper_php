@@ -98,6 +98,8 @@ RUN printf "\nInstalling Composer\n\n"; \
     fi; \
     rm composer-setup.php
 
+ENV COMPOSER_ALLOW_SUPERUSER 1
+
 RUN composer global require "hirak/prestissimo" && \
     rm -rf /root/.composer/cache
 
