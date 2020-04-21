@@ -9,13 +9,33 @@ use Verse\Run\Util\Uuid;
 
 class Solutions extends SimpleController {
 
+    private $createFields = [
+        SolutionsStorage::PATH,
+        SolutionsStorage::TYPE,
+        SolutionsStorage::NAME,
+    ];
+
+    private $editFields = [
+        SolutionsStorage::PATH,
+        SolutionsStorage::TYPE,
+        SolutionsStorage::NAME,
+    ];
+
     function get() {
         $storage = new SolutionsStorage();
 
-        $storage->write()->insert(Uuid::v4(), [
-            'test' => time(),
-        ], __METHOD__);
+        $bind = $this->requestWrapper->getParamsByKeys($this->createFields);
 
-        return $storage->search()->find([],100, __METHOD__);
+        $bind += [
+            SolutionsStorage::ID => Uuid::v4(),
+            SolutionsStorage::STATUS => 'created',
+            'createdAt' => time(),
+        ];
+
+        return $storage->write()->insert($bind[SolutionsStorage::ID], $bind, __METHOD__);
+    }
+
+    function put() {
+
     }
 }

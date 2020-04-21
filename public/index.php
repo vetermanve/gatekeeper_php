@@ -2,7 +2,6 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-use Base\Render\RenderSetupComponent;
 use Base\Run\RoutingProcessor;
 use Verse\Run\RunContext;
 use Verse\Run\RunCore;
@@ -24,7 +23,6 @@ $env->fill([
 $schema = new RegularHttpRequestSchema();
 $schema->setProcessor(new RoutingProcessor());
 $schema->setHttpEnv($env);
-$schema->addComponent(new RenderSetupComponent());
 
 $context = new RunContext();
 $context->fill([

@@ -1,6 +1,6 @@
 {
-    "name": "verse/verse_example",
-    "description": "@vetermanve personal site built upon Verse Framework",
+    "name": "verse/ohra",
+    "description": "Simple standalone solution orchestration tool",
     "type": "project",
     "license": "MIT",
     "authors": [
@@ -15,9 +15,9 @@
         }
     },
     "require": {
-        "twig/twig": "^2.5",
         "verse/run": "^0.0.8",
-        "verse/storage": "^0.0.10"
+        "verse/storage": "^0.0.10",
+        "verse/modular": "^1.0"
     },
     "minimum-stability" : "stable"
 }
