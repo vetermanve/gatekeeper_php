@@ -9,6 +9,8 @@ services:
     - ./:/var/www
     ports:
     - "8080:80"
+    depends_on:
+      - app
 
   workers:
     build:
@@ -21,12 +23,11 @@ services:
     volumes:
       - ./:/var/www
     environment:
-      - "POSTGRES_HOST=database"
-      - "POSTGRES_USER=postgres"
-      - "POSTGRES_PASSWORD=postgres"
-      - "POSTGRES_DB=example"
       - "PHP_IDE_CONFIG=serverName=localhost"
     user: www-data
+    depends_on:
+      - redis
+      - rabbit1
 
   app:
     build:
@@ -45,19 +46,31 @@ services:
     - "POSTGRES_DB=example"
     - "PHP_IDE_CONFIG=serverName=localhost"
     user: www-data
-#    extra_hosts:
-#    - "dockerhost:10.0.75.1"
-#
-#  database:
-#    image: postgres:10-alpine
-#    environment:
-#    - "POSTGRES_DB=example"
-#    - "POSTGRES_USER=postgres"
-#    - "POSTGRES_PASSWORD=postgres"
-#    ports:
-#    - "5432:5432"
+    depends_on:
+      - redis
+      - rabbit1
 
-#  redis:
-#    image: redis:4.0.2
-#    ports:
-#    - "6379:6379"
+  redis:
+    image: redis:4.0.5-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ~/data/redis-data:/data
+
+  rabbit1:
+    build:
+      context: .docker/rabbit
+    hostname: "rabbit1"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq1"
+

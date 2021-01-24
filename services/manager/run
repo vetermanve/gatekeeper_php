@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-while true ; do
-    date;
-    sleep 1;
-done;
+exec 2>&1
+
+exec php /var/www/run.php

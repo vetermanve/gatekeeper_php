@@ -99,9 +99,6 @@ RUN printf "\nInstalling Composer\n\n"; \
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-RUN composer global require "hirak/prestissimo" && \
-    rm -rf /root/.composer/cache
-
 #
 #--------------------------------------------------------------------------
 # User www-data Configuration
@@ -144,17 +141,8 @@ RUN if [ -n "${PUID}" ] && [ "${PUID%:*}" != 0 ]; then \
 #;fi
 
 
-ARG PHP_INSTALL_XDEBUG=false
-
 RUN if [ ${PHP_INSTALL_XDEBUG} = true ]; then \
     docker-php-ext-enable xdebug \
-;fi
-
-
-ARG PHP_XDEBUG_PORT=false
-
-RUN if [ ${PHP_XDEBUG_PORT} != false ]; then \
-    echo "xdebug.remote_port=${PHP_XDEBUG_PORT}" >> /usr/local/etc/php/conf.d/50-custom.ini \
 ;fi
 
 #

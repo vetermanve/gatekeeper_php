@@ -17,7 +17,10 @@
     "require": {
         "verse/run": "^0.0.8",
         "verse/storage": "^0.0.10",
-        "verse/modular": "^1.0"
+        "verse/modular": "^1.0",
+        "verse/router": "^1.1.1",
+        "ext-json": "*",
+        "vlucas/phpdotenv": "^5.3"
     },
     "minimum-stability" : "stable"
 }

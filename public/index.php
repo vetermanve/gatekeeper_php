@@ -1,14 +1,23 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+chdir(dirname(__DIR__));
 
+require_once 'vendor/autoload.php';
+
+use Base\Run\Component\BootstrapWorkerDC;
 use Base\Run\RoutingProcessor;
+use Monolog\Handler\RotatingFileHandler;
 use Verse\Run\RunContext;
 use Verse\Run\RunCore;
 use Verse\Run\RuntimeLog;
 use Verse\Run\Schema\RegularHttpRequestSchema;
 use Verse\Run\Util\HttpEnvContext;
 
+// load env
+$dotenv = Dotenv\Dotenv::createImmutable(getcwd());
+$dotenv->load();
+
+// build request context
 $env = new HttpEnvContext();
 $env->fill([
     HttpEnvContext::HTTP_COOKIE    => &$_COOKIE,
@@ -19,23 +28,22 @@ $env->fill([
     HttpEnvContext::HTTP_HEADERS   => getallheaders(),
 ]);
 
-
+// build schema
 $schema = new RegularHttpRequestSchema();
 $schema->setProcessor(new RoutingProcessor());
 $schema->setHttpEnv($env);
+$schema->addComponent(new BootstrapWorkerDC());
 
 $context = new RunContext();
 $context->fill([
     RunContext::HOST     => $_SERVER['HTTP_HOST'],
     RunContext::IDENTITY => ('http.'.getmypid() . '@' . gethostname()),
-    RunContext::IS_SECURE_CONNECTION => stripos($_SERVER['SERVER_PROTOCOL'],'https') === true
+    RunContext::IS_SECURE_CONNECTION => stripos($_SERVER['SERVER_PROTOCOL'],'https') === true,
+    RunContext::GLOBAL_CONFIG => $_ENV
 ]);
 
-
-$context->set(RunContext::GLOBAL_CONFIG, []);
-
 $runtime = new RuntimeLog($context->get(RunContext::IDENTITY));
-$runtime->pushHandler(new \Monolog\Handler\RotatingFileHandler(dirname(__DIR__).'/logs/out.log'));
+$runtime->pushHandler(new RotatingFileHandler(dirname(__DIR__).'/logs/out.log'));
 $runtime->catchErrors();
 
 $core = new RunCore();
