@@ -10,6 +10,10 @@ use Verse\Run\Util\Uuid;
 
 class Landing extends SimpleController
 {
+    public function get() {
+        return "rest-index";
+    }
+
     public function index () : string
     {
         /* @var $router Router */
@@ -17,21 +21,26 @@ class Landing extends SimpleController
 
         $queueName = 'http-worker';
 
-        $corrId = $router->publish([
+        $requestId = Uuid::v4();
+        $isSuccess = (bool)$router->publish([
             AmqpHttpRequest::METHOD => 'get',
             AmqpHttpRequest::DATA => [],
             AmqpHttpRequest::QUERY => [],
-            AmqpHttpRequest::UID => Uuid::v4(),
-            AmqpHttpRequest::PATH => '/',
+            AmqpHttpRequest::UID => $requestId,
+            AmqpHttpRequest::PATH => '/worker-sample',
             AmqpHttpRequest::REPLY => $router->getReplyQueueName(),
             AmqpHttpRequest::BORN => microtime(1),
             AmqpHttpRequest::HEADERS => [],
-        ], $queueName, true);
+        ], $queueName, true, [
+            'correlation_id' => $requestId
+        ]);
 
-        if (!$corrId) {
+        if (!$isSuccess) {
             return "Error on sending request to queue. ";
         }
-        $reply = $router->readResult($queueName, $corrId, 2);
-        return json_encode($reply);
+
+        $reply = $router->readResult($queueName, $requestId, 1);
+
+        return $requestId . ' ' .json_encode($reply);
     }
 }
