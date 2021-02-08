@@ -42,7 +42,7 @@ class TelegramUpdatePull
         $response = $telegram->getUpdates([
             'limit' => $limit,
             'offset' => $offset,
-            'allowed_updates' => json_encode(['message'])
+            'allowed_updates' => json_encode(['message', 'callback_query'])
         ]);
 
         return $response;
@@ -55,20 +55,22 @@ class TelegramUpdatePull
      * @return \Telegram\Bot\Objects\Message
      * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
-    public function post($chatId, $text, $replyToMessageId = 0)
+    public function post($chatId, $text, $keyboard = [], $replyToMessageId = 0)
     {
         $telegram = new Api($this->token);
+        $params = [
+            'chat_id' => $chatId,
+            'text' => is_string($text) ? $text : json_encode($text),
+            #'parse_mode' => 'html',
+            'disable_web_page_preview' => '1',
+            #'reply_to_message_id' => $replyToMessageId
+        ];
 
-        $message = $telegram->sendMessage(
-            $params = [
-                'chat_id' => $chatId,
-                'text' => $text,
-                'parse_mode' => 'html',
-                'disable_web_page_preview' => '1',
-                'reply_to_message_id' => $replyToMessageId,
-                #'reply_markup'             => '',
-            ]
-        );
+        if (!empty($keyboard)) {
+            $params['reply_markup'] = json_encode(['inline_keyboard' => [$keyboard]]);
+        }
+
+        $message = $telegram->sendMessage($params);
 
         return $message;
     }

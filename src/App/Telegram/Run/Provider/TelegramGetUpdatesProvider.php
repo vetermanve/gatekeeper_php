@@ -34,10 +34,21 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
 
                 $this->alreadyReadUpdates[$updateId] = time();
 
-                $request = new RunRequest($updateId, '/telegram/incoming');
-                $request->data = $update->getMessage();
+                $request = null;
 
-                $this->core->process($request);
+                if ($update->getMessage()) {
+                    $request = new RunRequest($updateId, '/telegram/message');
+                    $request->data = $update->getMessage();
+                } else if ($update->getCallbackQuery()) {
+                    $request = new RunRequest($updateId, '/telegram/callback');
+                    $request->data = $update->getCallbackQuery();
+                }
+
+                if ($request) {
+                    $this->core->process($request);
+                } else {
+                    $this->runtime->warning('Skipping message', [$update]);
+                }
 
                 if (count($this->alreadyReadUpdates) > 100) {
                     $latest = min($this->alreadyReadUpdates);

@@ -4,6 +4,8 @@
 namespace App\Telegram\Run\Processor;
 
 
+use App\Telegram\Run\Channel\TelegramReplyChannel;
+use Telegram\Bot\Objects\CallbackQuery;
 use Telegram\Bot\Objects\Message;
 use Telegram\Bot\Objects\Update;
 use Verse\Run\ChannelMessage\ChannelMsg;
@@ -20,14 +22,39 @@ class TelegramUpdateProcessor extends RunRequestProcessorProto
 
     public function process(RunRequest $request)
     {
-        /* @var $message Message */
-        $message = $request->data;
-
-        var_dump($message);
-
         $response = new ChannelMsg();
-        $response->body = $message->getText();
-        $response->setDestination($message->getChat()->getId());
+        $response->setUid($request->getUid());
+        $response->setBody("Not clear.");
+
+        if ($request->getResourcePart(1) === 'message')  {
+            /* @var $message Message */
+            $message = $request->data;
+            $response->body = $message->getText();
+            $response->setDestination($message->getChat()->getId());
+
+            $response->setMeta(TelegramReplyChannel::KEYBOARD, [
+                    [
+                        "text" => "A",
+                        "callback_data" => "A1",
+                    ]
+                ]
+            );
+        }
+
+        if ($request->getResourcePart(1) === 'callback')  {
+            /* @var $callback CallbackQuery */
+            $callback = $request->data;
+            $response->body = "Tapped: ".$callback->getData();
+            $response->setDestination($callback->getMessage()->getChat()->getId());
+
+            $response->setMeta(TelegramReplyChannel::KEYBOARD, [
+                    [
+                        "text" => "A",
+                        "callback_data" => "A1",
+                    ]
+                ]
+            );
+        }
 
         $this->sendResponse($response, $request);
     }
