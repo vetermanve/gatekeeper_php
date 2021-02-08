@@ -4,6 +4,7 @@ chdir(__DIR__);
 require_once "vendor/autoload.php";
 
 use Base\Run\Component\BootstrapWorkerDC;
+use Base\Run\Processor\Modificator\ClearHeadersMessageModificator;
 use Monolog\Handler\RotatingFileHandler;
 use Verse\Run\RunContext;
 use Verse\Run\RunCore;
@@ -19,12 +20,14 @@ $schema = new AmqpHttpRequestSchema();
 $schema->addComponent(new BootstrapWorkerDC());
 
 $context = new RunContext();
+$pidId = ('worker.'.getmypid() . '@' . gethostname());
+
 $context->fill([
-    RunContext::QUEUE_INCOMING => 'http-worker',
     RunContext::HOST     => "Worker",
-    RunContext::IDENTITY => ('worker.'.getmypid() . '@' . gethostname()),
+    RunContext::IDENTITY => $pidId,
     RunContext::IS_SECURE_CONNECTION => false,
-    RunContext::GLOBAL_CONFIG => $_ENV
+    RunContext::GLOBAL_CONFIG => $_ENV + [RunContext::IDENTITY => $pidId],
+    RunContext::QUEUE_INCOMING => $_ENV['AMQP_QUEUE'] ?? 'queue-not-defined'
 ]);
 
 $runtime = new RuntimeLog($context->get(RunContext::IDENTITY));
@@ -38,4 +41,9 @@ $core->setRuntime($runtime);
 
 $core->configure();
 $core->prepare();
+
+// dirty hack
+$core->getProcessor()->addMsgModificator(new ClearHeadersMessageModificator());
+// end hack
+
 $core->run();

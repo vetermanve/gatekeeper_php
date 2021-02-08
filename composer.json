@@ -20,7 +20,9 @@
         "verse/modular": "^1.0",
         "verse/router": "^1.1.1",
         "ext-json": "*",
-        "vlucas/phpdotenv": "^5.3"
+        "vlucas/phpdotenv": "^5.3",
+        "vetermanve/background_multiprocessor": "^0.9",
+        "irazasyed/telegram-bot-sdk": "^2.0"
     },
     "minimum-stability" : "stable"
 }

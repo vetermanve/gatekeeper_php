@@ -2,6 +2,7 @@
 
 namespace App\Landing\Controller;
 
+use App\Worker\Client\TestWorkerClient;
 use Verse\Di\Env;
 use Verse\Router\Router;
 use Verse\Run\Controller\SimpleController;
@@ -14,7 +15,18 @@ class Landing extends SimpleController
         return "rest-index";
     }
 
-    public function index () : string
+    public function index() : string {
+        $client = new TestWorkerClient();
+        $result = $client->sendRequest('get','/worker-sample');
+
+        if ($result->read()) {
+            return json_encode($result->read());
+        }
+
+        return 'Error: '.$result->getError();
+    }
+
+    public function indexWas () : string
     {
         /* @var $router Router */
         $router = Env::getContainer()->bootstrap(Router::class);

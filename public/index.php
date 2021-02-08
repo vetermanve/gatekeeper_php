@@ -35,11 +35,13 @@ $schema->setHttpEnv($env);
 $schema->addComponent(new BootstrapWorkerDC());
 
 $context = new RunContext();
+$pidId = ('http.'.getmypid() . '@' . gethostname());
+
 $context->fill([
     RunContext::HOST     => $_SERVER['HTTP_HOST'],
-    RunContext::IDENTITY => ('http.'.getmypid() . '@' . gethostname()),
+    RunContext::IDENTITY => $pidId,
     RunContext::IS_SECURE_CONNECTION => stripos($_SERVER['SERVER_PROTOCOL'],'https') === true,
-    RunContext::GLOBAL_CONFIG => $_ENV
+    RunContext::GLOBAL_CONFIG => $_ENV + [RunContext::IDENTITY => $pidId]
 ]);
 
 $runtime = new RuntimeLog($context->get(RunContext::IDENTITY));

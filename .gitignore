@@ -2,3 +2,5 @@
 /.idea/
 /logs/
 /data/
+/services/*/supervise
+composer.lock

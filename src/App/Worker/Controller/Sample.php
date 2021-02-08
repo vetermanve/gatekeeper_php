@@ -9,6 +9,6 @@ use Verse\Run\Controller\SimpleController;
 class Sample extends SimpleController
 {
     function get() {
-        return "aaaa";
+        return 'aaa';
     }
 }
