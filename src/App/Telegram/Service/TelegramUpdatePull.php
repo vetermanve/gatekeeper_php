@@ -5,6 +5,9 @@ namespace App\Telegram\Service;
 
 
 use Telegram\Bot\Api;
+use Telegram\Bot\Exceptions\TelegramSDKException;
+use Telegram\Bot\Objects\Message;
+use Telegram\Bot\Objects\Update;
 use Verse\Di\Env;
 use Verse\Run\RunContext;
 
@@ -35,25 +38,32 @@ class TelegramUpdatePull
         $this->token = $token;
     }
 
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @return array|Update[]
+     * @throws TelegramSDKException
+     */
     public function get($offset = 0, $limit = 100)
     {
         $telegram = new Api($this->token);
 
-        $response = $telegram->getUpdates([
+        $params = [
             'limit' => $limit,
-            'offset' => $offset,
+            'offset' => $offset > 0 ? $offset + 1 : null,
             'allowed_updates' => json_encode(['message', 'callback_query'])
-        ]);
+        ];
 
-        return $response;
+        return $telegram->getUpdates($params);
     }
 
     /**
      * @param $chatId
      * @param $text
+     * @param array $keyboard
      * @param int $replyToMessageId
-     * @return \Telegram\Bot\Objects\Message
-     * @throws \Telegram\Bot\Exceptions\TelegramSDKException
+     * @return Message
+     * @throws TelegramSDKException
      */
     public function post($chatId, $text, $keyboard = [], $replyToMessageId = 0)
     {
@@ -63,11 +73,14 @@ class TelegramUpdatePull
             'text' => is_string($text) ? $text : json_encode($text),
             #'parse_mode' => 'html',
             'disable_web_page_preview' => '1',
-            #'reply_to_message_id' => $replyToMessageId
         ];
 
         if (!empty($keyboard)) {
             $params['reply_markup'] = json_encode(['inline_keyboard' => [$keyboard]]);
+        }
+
+        if (!empty($replyToMessageId)) {
+            $params['reply_to_message_id'] = $replyToMessageId;
         }
 
         $message = $telegram->sendMessage($params);

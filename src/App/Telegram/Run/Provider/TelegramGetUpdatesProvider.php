@@ -3,6 +3,8 @@
 
 namespace App\Telegram\Run\Provider;
 
+use App\Telegram\Run\Spec\MessageType;
+use App\Telegram\Run\Storage\PullUpdatesStorage;
 use App\Telegram\Service\TelegramUpdatePull;
 use Telegram\Bot\Api;
 use Verse\Run\Provider\RequestProviderProto;
@@ -17,17 +19,33 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
 
     private $lastUpdateId = 0;
 
+    private PullUpdatesStorage $updateTrackerStorage;
+
     public function prepare()
     {
         $this->puller = new TelegramUpdatePull();
+        $this->updateTrackerStorage = new PullUpdatesStorage();
     }
 
     public function run()
     {
+        $lastUpdateInfo = $this->updateTrackerStorage->read()->get('last_update', __METHOD__,0);
+
+        $this->lastUpdateId = (double)$lastUpdateInfo['offset'] ?? 0;
+        $this->runtime->debug('TELEGRAM_PULL_START', ['offsetId' => $this->lastUpdateId]);
+
         while (true) {
             $updates = $this->puller->get($this->lastUpdateId);
+            $this->runtime->debug('TELEGRAM_PULL_UPDATES', ['count' => count($updates), 'offset' => $this->lastUpdateId]);
+
             foreach ($updates as $index => $update) {
-                $updateId = $update->getUpdateId();
+                $updateId = $update->updateId;
+
+                $this->lastUpdateId = $updateId;
+                if ($this->lastUpdateId > 0) {
+                    $this->updateTrackerStorage->write()->update('last_update', ['offset' => $this->lastUpdateId], __METHOD__);
+                }
+
                 if (isset($this->alreadyReadUpdates[$updateId])) {
                     continue;
                 }
@@ -36,12 +54,15 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
 
                 $request = null;
 
-                if ($update->getMessage()) {
-                    $request = new RunRequest($updateId, '/telegram/message');
-                    $request->data = $update->getMessage();
-                } else if ($update->getCallbackQuery()) {
+                 if ($update->getCallbackQuery()) {
+                    $this->runtime->debug("Got Callback", (array)$update);
+//                    $reply = MessageType::CALLBACK_QUERY.':'.$update->getMessage()->get
                     $request = new RunRequest($updateId, '/telegram/callback');
                     $request->data = $update->getCallbackQuery();
+                } else if ($update->getMessage()) {
+                    $this->runtime->debug("Got Message", (array)$update);
+                    $request = new RunRequest($updateId, '/telegram/message');
+                    $request->data = $update->getMessage();
                 }
 
                 if ($request) {

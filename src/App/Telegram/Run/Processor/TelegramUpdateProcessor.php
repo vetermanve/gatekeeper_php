@@ -46,6 +46,7 @@ class TelegramUpdateProcessor extends RunRequestProcessorProto
             $callback = $request->data;
             $response->body = "Tapped: ".$callback->getData();
             $response->setDestination($callback->getMessage()->getChat()->getId());
+            var_dump($response);
 
             $response->setMeta(TelegramReplyChannel::KEYBOARD, [
                     [
