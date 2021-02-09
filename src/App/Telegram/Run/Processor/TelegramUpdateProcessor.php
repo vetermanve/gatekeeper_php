@@ -30,7 +30,7 @@ class TelegramUpdateProcessor extends RunRequestProcessorProto
             /* @var $message Message */
             $message = $request->data;
             $response->body = $message->getText();
-            $response->setDestination($message->getChat()->getId());
+            $response->setDestination($request->getReply());
 
             $response->setMeta(TelegramReplyChannel::KEYBOARD, [
                     [
@@ -44,17 +44,8 @@ class TelegramUpdateProcessor extends RunRequestProcessorProto
         if ($request->getResourcePart(1) === 'callback')  {
             /* @var $callback CallbackQuery */
             $callback = $request->data;
-            $response->body = "Tapped: ".$callback->getData();
-            $response->setDestination($callback->getMessage()->getChat()->getId());
-            var_dump($response);
-
-            $response->setMeta(TelegramReplyChannel::KEYBOARD, [
-                    [
-                        "text" => "A",
-                        "callback_data" => "A1",
-                    ]
-                ]
-            );
+            $response->body = "Tapped: ".$callback->data;
+            $response->setDestination($request->getReply());
         }
 
         $this->sendResponse($response, $request);

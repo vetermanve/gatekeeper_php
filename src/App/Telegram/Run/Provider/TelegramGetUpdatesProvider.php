@@ -54,14 +54,17 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
 
                 $request = null;
 
-                 if ($update->getCallbackQuery()) {
+                $type = $update->detectType();
+
+                 if ($type === MessageType::CALLBACK_QUERY) {
                     $this->runtime->debug("Got Callback", (array)$update);
-//                    $reply = MessageType::CALLBACK_QUERY.':'.$update->getMessage()->get
-                    $request = new RunRequest($updateId, '/telegram/callback');
+                    $reply = 'tg'.':'.$update->getChat()->id.':'.MessageType::CALLBACK_QUERY.':'.$update->callbackQuery->id;
+                    $request = new RunRequest($updateId, '/telegram/callback', $reply);
                     $request->data = $update->getCallbackQuery();
-                } else if ($update->getMessage()) {
+                } else if ($type === MessageType::MESSAGE) {
                     $this->runtime->debug("Got Message", (array)$update);
-                    $request = new RunRequest($updateId, '/telegram/message');
+                    $reply = 'tg'.':'.$update->getChat()->id.':'.MessageType::MESSAGE.':'.$update->message->messageId;
+                    $request = new RunRequest($updateId, '/telegram/message', $reply);
                     $request->data = $update->getMessage();
                 }
 
@@ -69,14 +72,6 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
                     $this->core->process($request);
                 } else {
                     $this->runtime->warning('Skipping message', [$update]);
-                }
-
-                if (count($this->alreadyReadUpdates) > 100) {
-                    $latest = min($this->alreadyReadUpdates);
-                    $latestKey = array_search($latest, $this->alreadyReadUpdates);
-                    if ($latestKey) {
-                        unset($this->alreadyReadUpdates[$latestKey]);
-                    }
                 }
             }
 

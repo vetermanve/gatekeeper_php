@@ -15,11 +15,26 @@ class TelegramUpdatePull
 {
     public $token = '';
 
+    protected Api $api;
+
     public function __construct()
     {
         /** @var RunContext $config */
         $config = Env::getContainer()->bootstrap('config');
         $this->token = $config->get("BOT_TOKEN");
+    }
+
+
+    /**
+     * @return Api
+     * @throws TelegramSDKException
+     */
+    protected function getApi () {
+        if (!isset($this->api)) {
+            $this->api = new Api($this->token);
+        }
+
+        return $this->api;
     }
 
     /**
@@ -46,15 +61,13 @@ class TelegramUpdatePull
      */
     public function get($offset = 0, $limit = 100)
     {
-        $telegram = new Api($this->token);
-
         $params = [
             'limit' => $limit,
             'offset' => $offset > 0 ? $offset + 1 : null,
             'allowed_updates' => json_encode(['message', 'callback_query'])
         ];
 
-        return $telegram->getUpdates($params);
+        return $this->getApi()->getUpdates($params);
     }
 
     /**
@@ -86,5 +99,18 @@ class TelegramUpdatePull
         $message = $telegram->sendMessage($params);
 
         return $message;
+    }
+
+    /**
+     * @param $text
+     * @param $callbackId
+     * @return bool
+     * @throws TelegramSDKException
+     */
+    public function answerCallback($text, $callbackId) {
+        return $this->getApi()->answerCallbackQuery([
+            'callback_query_id' => $callbackId,
+            'text' => $text
+        ]);
     }
 }
