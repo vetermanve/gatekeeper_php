@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/bootstrap.php';
+require_once dirname(__DIR__). '/bootstrap.php';
 
 use Base\Run\Component\BootstrapWorkerDC;
 use Base\Run\Processor\Modificator\ClearHeadersMessageModificator;

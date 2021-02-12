@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Telegram\Run\Scheme;
+namespace Verse\Telegram\Run\Scheme;
 
 
-use App\Telegram\Run\Channel\TelegramReplyChannel;
-use App\Telegram\Run\Processor\TelegramUpdateProcessor;
-use App\Telegram\Run\Provider\TelegramGetUpdatesProvider;
+use Verse\Telegram\Run\Channel\TelegramReplyChannel;
+use Verse\Telegram\Run\Processor\TelegramUpdateProcessor;
+use Verse\Telegram\Run\Provider\TelegramGetUpdatesProvider;
 use Verse\Run\Component\CreateDependencyContainer;
 use Verse\Run\Component\UnexpectedShutdownHandler;
 use Verse\Run\Processor\SimpleRestProcessor;

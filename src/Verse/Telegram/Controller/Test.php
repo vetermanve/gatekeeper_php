@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Telegram\Controller;
+namespace Verse\Telegram\Controller;
 
 
-use App\Telegram\Service\TelegramUpdatePull;
+use Verse\Telegram\Service\TelegramUpdatePull;
 use Verse\Run\Controller\SimpleController;
 
 class Test extends SimpleController

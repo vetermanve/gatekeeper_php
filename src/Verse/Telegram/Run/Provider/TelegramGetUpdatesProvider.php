@@ -1,11 +1,11 @@
 <?php
 
 
-namespace App\Telegram\Run\Provider;
+namespace Verse\Telegram\Run\Provider;
 
-use App\Telegram\Run\Spec\MessageType;
-use App\Telegram\Run\Storage\PullUpdatesStorage;
-use App\Telegram\Service\TelegramUpdatePull;
+use Verse\Telegram\Run\Spec\MessageType;
+use Verse\Telegram\Run\Storage\PullUpdatesStorage;
+use Verse\Telegram\Service\TelegramUpdatePull;
 use Telegram\Bot\Api;
 use Verse\Run\Provider\RequestProviderProto;
 use Verse\Run\RunRequest;

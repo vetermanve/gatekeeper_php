@@ -1,11 +1,11 @@
 <?php
 
 
-namespace App\Telegram\Run\Channel;
+namespace Verse\Telegram\Run\Channel;
 
 
-use App\Telegram\Run\Spec\MessageType;
-use App\Telegram\Service\TelegramUpdatePull;
+use Verse\Telegram\Run\Spec\MessageType;
+use Verse\Telegram\Service\TelegramUpdatePull;
 use Verse\Run\Channel\DataChannelProto;
 use Verse\Run\ChannelMessage\ChannelMsg;
 use Verse\Run\RunContext;

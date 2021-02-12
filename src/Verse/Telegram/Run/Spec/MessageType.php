@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Telegram\Run\Spec;
+namespace Verse\Telegram\Run\Spec;
 
 
 class MessageType

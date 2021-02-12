@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Telegram\Service;
+namespace Verse\Telegram\Service;
 
 
 use Telegram\Bot\Api;

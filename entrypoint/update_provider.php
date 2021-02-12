@@ -3,14 +3,13 @@
 require_once __DIR__.'/../bootstrap.php';
 
 use Base\Run\Component\BootstrapWorkerDC;
-use Base\Run\Processor\Modificator\ClearHeadersMessageModificator;
 use Monolog\Handler\RotatingFileHandler;
 use Verse\Run\RunContext;
 use Verse\Run\RunCore;
 use Verse\Run\RuntimeLog;
 
 // start build schema
-$schema = new \App\Telegram\Run\Scheme\TelegramPullScheme();
+$schema = new \Verse\Telegram\Run\Scheme\TelegramPullScheme();
 $schema->addComponent(new BootstrapWorkerDC());
 
 $context = new RunContext();
@@ -26,7 +25,6 @@ $context->fill([
 ]);
 
 $runtime = new RuntimeLog($context->get(RunContext::IDENTITY));
-var_dump(getcwd());
 $runtime->pushHandler(new RotatingFileHandler(getcwd().'/logs/'.$host.'-out.log'));
 $runtime->catchErrors();
 
