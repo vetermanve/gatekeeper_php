@@ -9,11 +9,28 @@ use Verse\Run\RunRequest;
 
 class TelegramRouterByMessageType implements RequestRouterInterface
 {
-    const DEFAULT_APPLICATION = 'Landing';
+    const DEFAULT_MODULE = 'Landing';
     const DEFAULT_CONTROLLER = 'Landing';
 
     public function getClassByRequest(RunRequest $request)
     {
-        return '\\'.self::DEFAULT_APPLICATION.'\\Controller\\'.self::DEFAULT_CONTROLLER;
+        $module = $request->getResourcePart(0);
+        if ($module) {
+            $moduleParts = explode('_', $module);
+            $moduleName = ucfirst(array_shift($moduleParts));
+            if ($moduleParts) {
+                array_walk($moduleParts, function (&$val) {
+                    $val = ucfirst($val);
+                });
+                $controllerName = implode('', $moduleParts);
+            } else {
+                $controllerName = $moduleName;
+            }
+        } else {
+            $controllerName = self::DEFAULT_CONTROLLER;
+            $moduleName = self::DEFAULT_MODULE;
+        }
+
+        return '\\' . $moduleName . '\\Controller\\' . $controllerName;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Landing\Controller;
 
+use App\Landing\Service\GreetingTextProvider;
 use App\Worker\Client\TestWorkerClient;
 use Verse\Di\Env;
 use Verse\Router\Router;
@@ -13,6 +14,10 @@ class Landing extends SimpleController
 {
     public function get() {
         return "rest-index";
+    }
+
+    public function text_message() {
+        return $this->index();
     }
 
     public function index() : string {
@@ -57,7 +62,9 @@ class Landing extends SimpleController
     }
 
     public function new_chat_members() {
-        $data = $this->requestWrapper->getParams();
-        return json_encode((array)$data);
+        $newMembers = $this->requestWrapper->getParams();
+
+        $textProvider = new GreetingTextProvider();
+        return $textProvider->getText(0, $newMembers);
     }
 }
