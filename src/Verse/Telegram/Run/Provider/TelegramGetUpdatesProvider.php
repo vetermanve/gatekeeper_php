@@ -91,7 +91,7 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
 
                 switch ($method) {
                     case MessageType::TEXT_MESSAGE:
-                        $request->data = $update->getMessage();
+                        $request->data = (array)$update->getMessage();
                         break;
 
                     case MessageType::CALLBACK_QUERY:
@@ -116,6 +116,7 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
                 }
 
                 if ($request) {
+                    $request->data['update'] = $update;
                     $this->core->process($request);
                 } else {
                     $this->runtime->warning('Skipping message', [$update]);

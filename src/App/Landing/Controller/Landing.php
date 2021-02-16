@@ -4,20 +4,22 @@ namespace App\Landing\Controller;
 
 use App\Landing\Service\GreetingTextProvider;
 use App\Worker\Client\TestWorkerClient;
-use Verse\Di\Env;
-use Verse\Router\Router;
-use Verse\Run\Controller\SimpleController;
-use Verse\Run\Spec\AmqpHttpRequest;
-use Verse\Run\Util\Uuid;
+use Verse\Telegram\Run\Controller\TelegramResponse;
+use Verse\Telegram\Run\Controller\TelegramRunController;
 
-class Landing extends SimpleController
+class Landing extends TelegramRunController
 {
     public function get() {
-        return "rest-index";
+        return $this->index();
     }
 
-    public function text_message() {
-        return $this->index();
+    public function text_message() : TelegramResponse {
+        $text =  $this->index();
+
+        $response = new TelegramResponse();
+        $response->setText($text);
+
+        return $response;
     }
 
     public function index() : string {
@@ -31,40 +33,14 @@ class Landing extends SimpleController
         return 'Error: '.$result->getError();
     }
 
-    public function indexWas () : string
-    {
-        /* @var $router Router */
-        $router = Env::getContainer()->bootstrap(Router::class);
-
-        $queueName = 'http-worker';
-
-        $requestId = Uuid::v4();
-        $isSuccess = (bool)$router->publish([
-            AmqpHttpRequest::METHOD => 'get',
-            AmqpHttpRequest::DATA => [],
-            AmqpHttpRequest::QUERY => [],
-            AmqpHttpRequest::UID => $requestId,
-            AmqpHttpRequest::PATH => '/worker-sample',
-            AmqpHttpRequest::REPLY => $router->getReplyQueueName(),
-            AmqpHttpRequest::BORN => microtime(1),
-            AmqpHttpRequest::HEADERS => [],
-        ], $queueName, true, [
-            'correlation_id' => $requestId
-        ]);
-
-        if (!$isSuccess) {
-            return "Error on sending request to queue. ";
-        }
-
-        $reply = $router->readResult($queueName, $requestId, 1);
-
-        return $requestId . ' ' .json_encode($reply);
-    }
-
-    public function new_chat_members() {
+    public function new_chat_members() : TelegramResponse {
         $newMembers = $this->requestWrapper->getParams();
 
         $textProvider = new GreetingTextProvider();
-        return $textProvider->getText(0, $newMembers);
+
+        $response = new TelegramResponse();
+        $response->setText($textProvider->getText(0, $newMembers));
+
+        return $response;
     }
 }

@@ -10,6 +10,8 @@ use Verse\Run\Interfaces\RequestRouterInterface;
 use Verse\Run\Processor\RunRequestProcessorProto;
 use Verse\Run\RequestWrapper\RunHttpRequestWrapper;
 use Verse\Run\RunRequest;
+use Verse\Telegram\Run\Channel\TelegramReplyChannel;
+use Verse\Telegram\Run\Controller\TelegramResponse;
 use Verse\Telegram\Run\RequestRouter\TelegramRouterByMessageType;
 
 class TelegramUpdateProcessor extends RunRequestProcessorProto
@@ -66,30 +68,30 @@ class TelegramUpdateProcessor extends RunRequestProcessorProto
 
         $responseData = $controller->run();
 
-        if (is_string($responseData)) {
-            $response->body = $responseData;
+        if ($responseData !== null) {
+            if ($responseData instanceof TelegramResponse) {
+                $response->body = $responseData->getText();
+
+                if ($responseData->hasKeyboard()) {
+                    $keyboard = [];
+                    foreach ($responseData->getKeyboard() as $keyTitle => $keyCallbackData) {
+                        $keyboard[] = [
+                            "text" => $keyTitle,
+                            "callback_data" => $keyCallbackData,
+                        ];
+                    }
+
+                    $response->setMeta(TelegramReplyChannel::KEYBOARD, $keyboard);
+                }
+
+            } else if (is_string($responseData)) {
+                $response->body = $responseData;
+            } else {
+                $response->body = 'Error in response data type';
+            }
+
+            $this->sendResponse($response, $request);
         }
-
-        $this->sendResponse($response, $request);
-
-//        if ($request->getResourcePart(1) === 'message')  {
-//            /* @var $message Message */
-//            $message = $request->data;
-//            $response->body = $message->getText();
-//         }
-//            $response->setMeta(TelegramReplyChannel::KEYBOARD, [
-//                    [
-//                        "text" => "A",
-//                        "callback_data" => "A1",
-//                    ]
-//                ]
-//            );
-//
-//        if ($request->getResourcePart(1) === 'callback')  {
-//            /* @var $callback CallbackQuery */
-//            $callback = $request->data;
-//            $response->setDestination($request->getReply());
-//        }
     }
 
     /**
