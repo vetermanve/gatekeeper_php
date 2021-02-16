@@ -15,7 +15,8 @@ $schema = new AmqpHttpRequestSchema();
 $schema->addComponent(new BootstrapWorkerDC());
 
 $context = new RunContext();
-$pidId = ('worker.'.getmypid() . '@' . gethostname());
+$role = 'Worker';
+$pidId = ($role.'.'.getmypid() . '@' . gethostname());
 
 $context->fill([
     RunContext::HOST     => "Worker",
@@ -26,7 +27,7 @@ $context->fill([
 ]);
 
 $runtime = new RuntimeLog($context->get(RunContext::IDENTITY));
-$runtime->pushHandler(new RotatingFileHandler(__DIR__.'/logs/out.log'));
+$runtime->pushHandler(new RotatingFileHandler(getcwd().'/logs/'.$role.'/'.$pidId.'/out.log'));
 $runtime->catchErrors();
 
 $core = new RunCore();

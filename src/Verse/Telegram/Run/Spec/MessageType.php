@@ -16,4 +16,32 @@ class MessageType
     public const SHIPPING_QUERY = 'shipping_query';
     public const PRE_CHECKOUT_QUERY = 'pre_checkout_query';
     public const POLL = 'poll';
+
+    /* MESSAGE TYPES */
+    public const LEFT_CHAT_MEMBER = 'left_chat_member';
+    public const TEXT_MESSAGE = 'text_message';
+    public const NEW_CHAT_MEMBERS = 'new_chat_members';
+
+    /* virtual types */
+    public const NOT_SUPPORTED = 'not_supported';
+    public const COMMAND = 'command';
+
+    public const TYPES = [
+        self::CALLBACK_QUERY,
+        self::CHOSEN_INLINE_RESULT,
+        self::EDITED_MESSAGE,
+        self::INLINE_QUERY,
+        self::EDITED_CHANNEL_POST,
+        self::CHANNEL_POST,
+        self::SHIPPING_QUERY,
+        self::PRE_CHECKOUT_QUERY,
+        self::POLL,
+        self::MESSAGE
+    ];
+
+    public const MESSAGE_SUBTYPES = [
+        self::LEFT_CHAT_MEMBER,
+        self::NEW_CHAT_MEMBERS,
+        self::TEXT_MESSAGE,
+    ];
 }

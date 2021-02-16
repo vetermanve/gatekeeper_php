@@ -64,7 +64,7 @@ class TelegramUpdatePull
         $params = [
             'limit' => $limit,
             'offset' => $offset > 0 ? $offset + 1 : null,
-            'allowed_updates' => json_encode(['message', 'callback_query'])
+            //'allowed_updates' => json_encode(['message', 'callback_query'])
         ];
 
         return $this->getApi()->getUpdates($params);

@@ -55,4 +55,9 @@ class Landing extends SimpleController
 
         return $requestId . ' ' .json_encode($reply);
     }
+
+    public function new_chat_members() {
+        $data = $this->requestWrapper->getParams();
+        return json_encode((array)$data);
+    }
 }

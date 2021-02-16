@@ -40,7 +40,8 @@ class TelegramUpdateProcessor extends RunRequestProcessorProto
 
         $suggestedClass = $this->requestRouter->getClassByRequest($request);
         $class = $this->controllerNamespace.$suggestedClass;
-        $this->runtime->runtime('Got Class '.$class);
+        $this->runtime->runtime('Got Class '.$class, ['meta' => $request->meta,]);
+
         if (!class_exists($class)) {
             $response->setBody('Cannot process: Class missing');
             $this->sendResponse($response, $request);
@@ -58,6 +59,7 @@ class TelegramUpdateProcessor extends RunRequestProcessorProto
         $runRequestWrapper->setRequest($request);
 
         $controller->setRequestWrapper($runRequestWrapper);
+        $controller->setMethod($runRequestWrapper->getMethod());
 
         if (!$controller->validateMethod()) {
             $response->setBody('Method is not valid');

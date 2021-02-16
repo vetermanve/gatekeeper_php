@@ -13,11 +13,11 @@ $schema = new \Verse\Telegram\Run\Scheme\TelegramPullScheme();
 $schema->addComponent(new BootstrapWorkerDC());
 
 $context = new RunContext();
-$host = 'TelegramProvider';
-$pidId = ($host.'.'.getmypid() . '@' . gethostname());
+$role = 'TelegramProvider';
+$pidId = ($role.'.'.getmypid() . '@' . gethostname());
 
 $context->fill([
-    RunContext::HOST     => $host,
+    RunContext::HOST     => $role,
     RunContext::IDENTITY => $pidId,
     RunContext::IS_SECURE_CONNECTION => false,
     RunContext::GLOBAL_CONFIG => $_ENV + [RunContext::IDENTITY => $pidId],
@@ -25,7 +25,7 @@ $context->fill([
 ]);
 
 $runtime = new RuntimeLog($context->get(RunContext::IDENTITY));
-$runtime->pushHandler(new RotatingFileHandler(getcwd().'/logs/'.$host.'-out.log'));
+$runtime->pushHandler(new RotatingFileHandler(getcwd().'/logs/'.$role.'/'.$pidId.'/out.log'));
 $runtime->catchErrors();
 
 $core = new RunCore();

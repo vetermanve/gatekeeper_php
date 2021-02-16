@@ -31,7 +31,7 @@ $context->fill([
 ]);
 
 $runtime = new RuntimeLog($context->get(RunContext::IDENTITY));
-$runtime->pushHandler(new RotatingFileHandler(__DIR__.'/logs/out.log'));
+$runtime->pushHandler(new RotatingFileHandler(getcwd().'/logs/'.$role.'/'.$pidId.'/out.log'));
 $runtime->catchErrors();
 
 $core = new RunCore();
