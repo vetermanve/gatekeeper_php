@@ -20,9 +20,13 @@ class WaitingList extends TelegramRunController
             $names[] = $record[WaitingListStorage::USER_ID].' in '.$record[WaitingListStorage::CHAT_ID];
         }
 
+        $responseText = implode("\n", $names);
+        if (empty($responseText)) {
+            $responseText = 'Empty';
+        }
+
         return $this->response()
-            ->setText(implode("\n", $names))
-            ->addKeyboardKey('WaitingList', '/waitingList?test=blabla11')
+            ->setText($responseText)
         ;
     }
 

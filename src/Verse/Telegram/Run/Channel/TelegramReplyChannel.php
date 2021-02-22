@@ -5,7 +5,7 @@ namespace Verse\Telegram\Run\Channel;
 
 
 use Verse\Telegram\Run\Spec\MessageType;
-use Verse\Telegram\Service\TelegramUpdatePull;
+use Verse\Telegram\Service\VerseTelegramClient;
 use Verse\Run\Channel\DataChannelProto;
 use Verse\Run\ChannelMessage\ChannelMsg;
 use Verse\Run\RunContext;
@@ -15,7 +15,7 @@ class TelegramReplyChannel extends DataChannelProto
     const KEYBOARD = 'keyboard';
 
     /**
-     * @var TelegramUpdatePull
+     * @var VerseTelegramClient
      */
     private $telegramClient;
 
@@ -23,7 +23,7 @@ class TelegramReplyChannel extends DataChannelProto
 
     public function prepare()
     {
-        $this->telegramClient = new TelegramUpdatePull();
+        $this->telegramClient = new VerseTelegramClient();
         $this->identity = $this->context->get(RunContext::IDENTITY);
     }
 

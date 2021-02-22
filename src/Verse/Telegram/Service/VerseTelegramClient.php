@@ -11,7 +11,7 @@ use Telegram\Bot\Objects\Update;
 use Verse\Di\Env;
 use Verse\Run\RunContext;
 
-class TelegramUpdatePull
+class VerseTelegramClient
 {
     public $token = '';
 
@@ -29,7 +29,7 @@ class TelegramUpdatePull
      * @return Api
      * @throws TelegramSDKException
      */
-    protected function getApi () {
+    public function getApi () {
         if (!isset($this->api)) {
             $this->api = new Api($this->token);
         }

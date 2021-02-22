@@ -31,6 +31,11 @@ abstract class TelegramRunController extends SimpleController
         return null;
     }
 
+    public function edited_message() : ?TelegramResponse
+    {
+        return $this->text_message();
+    }
+
     public function not_supported() : ?TelegramResponse
     {
         return null;
@@ -53,5 +58,10 @@ abstract class TelegramRunController extends SimpleController
     public function log($text, $data = [])
     {
         Env::getContainer()->bootstrap(LoggerInterface::class)->debug($text, $data);
+    }
+
+    protected function textResponse(?string $text) : TelegramResponse
+    {
+        return $this->response()->setText(empty($text) ? "*Empty message error*" : $text);
     }
 }

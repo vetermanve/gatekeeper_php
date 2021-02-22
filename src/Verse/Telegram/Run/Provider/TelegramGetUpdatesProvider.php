@@ -4,17 +4,19 @@
 namespace Verse\Telegram\Run\Provider;
 
 use Telegram\Bot\Objects\Update;
+use Telegram\Bot\Objects\User;
 use Verse\Run\Spec\HttpRequestMetaSpec;
+use Verse\Telegram\Run\ChannelState\TelegramState;
 use Verse\Telegram\Run\Spec\MessageType;
 use Verse\Telegram\Run\Storage\PullUpdatesStorage;
-use Verse\Telegram\Service\TelegramUpdatePull;
+use Verse\Telegram\Service\VerseTelegramClient;
 use Verse\Run\Provider\RequestProviderProto;
 use Verse\Run\RunRequest;
 
 class TelegramGetUpdatesProvider extends RequestProviderProto
 {
 
-    private TelegramUpdatePull $puller;
+    private VerseTelegramClient $puller;
 
     private $alreadyReadUpdates = [];
 
@@ -24,7 +26,7 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
 
     public function prepare()
     {
-        $this->puller = new TelegramUpdatePull();
+        $this->puller = new VerseTelegramClient();
         $this->updateTrackerStorage = new PullUpdatesStorage();
     }
 
@@ -40,6 +42,8 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
             $this->runtime->debug('TELEGRAM_PULL_UPDATES', ['count' => count($updates), 'offset' => $this->lastUpdateId]);
 
             foreach ($updates as $index => $update) {
+                $this->runtime->runtime('TELEGRAM_PULL_UPDATES', $update->all());
+
                 $updateId = $update->updateId;
 
                 $this->lastUpdateId = $updateId;
@@ -53,30 +57,31 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
 
                 $this->alreadyReadUpdates[$updateId] = time();
 
-                $request = null;
-
                 $method = $this->_getMethod($update);
                 $chatId = $update->getChat()->id ?? 0;
 
-                $commandData = '';
+                $commandString = '';
                 $resource = '/';
                 $params = [];
 
-                $reply = 'tg:'.$chatId.':'.MessageType::MESSAGE.':'.($update->message->messageId ?? '');
+                $reply = 'tg:'.$chatId.':'.MessageType::MESSAGE.':'.($update->getMessage()->messageId ?? '');
+                $text = $update->getMessage()->text ?? '';
 
                 if ($method === MessageType::CALLBACK_QUERY) {
-                    $commandData = $update->getCallbackQuery()->data;
+                    $commandString = $update->getCallbackQuery()->data;
                     $reply = 'tg:'.$chatId.':'.MessageType::CALLBACK_QUERY.':'.$update->callbackQuery->id;
-                } elseif ($method === MessageType::TEXT_MESSAGE) {
-                    $commandData = $this->_detectCommand($update->getMessage()->text ?? '');
+                } elseif (!empty($text)) {
+                    $commandString = $this->_detectCommand($text);
                 }
 
-                if ($commandData !== '') {
-                   $resource = parse_url($commandData, PHP_URL_PATH);
-                   $paramsSting = parse_url($commandData, PHP_URL_QUERY);
+                if ($commandString !== '') {
+                   $resource = parse_url($commandString, PHP_URL_PATH);
+                   $paramsSting = parse_url($commandString, PHP_URL_QUERY);
                    if ($paramsSting) {
                         parse_str($paramsSting, $params);
                    }
+
+                   $text = trim(str_replace($commandString, '', $text));
                 }
 
                 $this->runtime->debug("Got UPDATE", [
@@ -89,9 +94,29 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
                 $request->params = $params;
                 $request->meta[HttpRequestMetaSpec::REQUEST_METHOD] = $method;
 
+                $state = $request->getChannelState();
+
+                $state->set(TelegramState::CHAT_ID, $update->getChat()->id);
+
+                $user = $update->getMessage()->from;
+                /* @var $user User */
+                $state->set(TelegramState::USER_ID, $user ? $user->id : 0);
+                $state->set(TelegramState::USER_USERNAME, $user ? ''.$user->username : '');
+                $state->set(TelegramState::USER_FIRST_NAME, $user ? $user->firstName : '');
+                $state->set(TelegramState::USER_LAST_NAME, $user ? $user->lastName : '');
+                $state->set(TelegramState::USER_IS_BOT, $user ? $user->isBot : false);
+                $state->set(TelegramState::USER_LANGUAGE_CODE, $user ? $user->id : 'en');
+//                $state->set('user.id', $user ? $user->id : 0);
+
                 switch ($method) {
                     case MessageType::TEXT_MESSAGE:
-                        $request->data = (array)$update->getMessage();
+                        $request->data = $update->message->all();
+                        $request->data['text'] = $text;
+                        break;
+
+                    case MessageType::EDITED_MESSAGE:
+                        $request->data = $update->editedMessage->all();
+                        $request->data['text'] = $text;
                         break;
 
                     case MessageType::CALLBACK_QUERY:

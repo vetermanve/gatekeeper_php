@@ -1,2 +1,5 @@
-# verse_example
-Example of site based on Verse Framework
+# Gatekeeper PHP
+Telegram bot build on top of Verse Framework
+
+## The bot
+Bot is aimed to provide guard from bots and uncivilized behaviour in Telegram group

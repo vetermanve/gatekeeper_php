@@ -4,3 +4,4 @@
 /data/
 /services/*/supervise
 composer.lock
+.env.local
