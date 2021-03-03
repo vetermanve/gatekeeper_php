@@ -1,0 +1,1 @@
+NEW_GROUP : {"update_id":411663615,"message":{"message_id":4516,"from":{"id":132663942,"is_bot":false,"first_name":"Mike","last_name":"Denisov","username":"vetermanve","language_code":"ru"},"chat":{"id":-548006745,"title":"Gate Develop #2","type":"group","all_members_are_administrators":true},"date":1614783819,"group_chat_created":true}}

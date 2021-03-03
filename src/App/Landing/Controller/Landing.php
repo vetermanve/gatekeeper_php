@@ -43,4 +43,9 @@ class Landing extends TelegramRunController
 
         return $response;
     }
+
+    public function group_chat_created(): ?TelegramResponse
+    {
+        return $this->textResponse("Всем привет в этом чате! Давайте настроимся!");
+    }
 }

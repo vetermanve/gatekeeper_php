@@ -131,6 +131,10 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
                         $request->data = $update->message[MessageType::LEFT_CHAT_MEMBER];
                         break;
 
+                    case MessageType::GROUP_CHAT_CREATED:
+                        $request->data = $update->getChat();
+                        break;
+
                     default:
                         $this->runtime->debug("Got Message of unsupported type", (array)$update);
                         $reply = 'tg:'.$chatId.':'.MessageType::MESSAGE.':'.$update->message->messageId;

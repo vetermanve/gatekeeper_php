@@ -46,6 +46,11 @@ abstract class TelegramRunController extends SimpleController
         return null;
     }
 
+    public function group_chat_created() : ?TelegramResponse
+    {
+        return null;
+    }
+
     protected function response() : TelegramResponse {
         return new TelegramResponse();
     }

@@ -21,6 +21,7 @@ class MessageType
     public const LEFT_CHAT_MEMBER = 'left_chat_member';
     public const TEXT_MESSAGE = 'text_message';
     public const NEW_CHAT_MEMBERS = 'new_chat_members';
+    public const GROUP_CHAT_CREATED = 'group_chat_created';
 
     /* virtual types */
     public const NOT_SUPPORTED = 'not_supported';
@@ -43,5 +44,6 @@ class MessageType
         self::LEFT_CHAT_MEMBER,
         self::NEW_CHAT_MEMBERS,
         self::TEXT_MESSAGE,
+        self::GROUP_CHAT_CREATED,
     ];
 }
