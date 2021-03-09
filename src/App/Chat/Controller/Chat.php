@@ -1,30 +1,24 @@
 <?php
 
 
-namespace App\Context\Controller;
+namespace App\Chat\Controller;
 
 
-use Telegram\Bot\TelegramClient;
 use Verse\Telegram\Run\ChannelState\TelegramState;
 use Verse\Telegram\Run\Controller\TelegramResponse;
 use Verse\Telegram\Run\Controller\TelegramRunController;
 use Verse\Telegram\Service\VerseTelegramClient;
 
-class Context extends TelegramRunController
+class Chat extends TelegramRunController
 {
     public function text_message(): ?TelegramResponse
     {
         $chatId = $this->getState(TelegramState::CHAT_ID);
-
-        $this->log('params', $this->requestWrapper->getParams());
-
-        if (!$chatId) {
-            return $this->response()->setText('ChatId not found');
-        }
+        $this->getState(TelegramState::CHAT_ID);
 
         $data = $this->getChat($chatId);
 
-        return $this->textResponse(json_encode($data));
+        return  $this->textResponse(json_encode($data));
     }
 
     public function getChat($id) {

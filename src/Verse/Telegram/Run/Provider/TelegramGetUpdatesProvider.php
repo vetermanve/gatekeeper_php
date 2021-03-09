@@ -132,7 +132,7 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
                         break;
 
                     case MessageType::GROUP_CHAT_CREATED:
-                        $request->data = $update->getChat();
+                        $request->data = $update->getChat()->all();
                         break;
 
                     default:

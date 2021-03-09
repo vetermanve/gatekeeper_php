@@ -113,4 +113,26 @@ class VerseTelegramClient
             'text' => $text
         ]);
     }
+
+    /**
+     * @param $id
+     * @return \Telegram\Bot\Objects\Chat|null
+     */
+    public function getChat ($id) {
+
+        try {
+            return $this->client->getApi()->getChat(['chat_id' => $id]);
+        } catch (\Throwable $exception) {
+            return null;
+        }
+    }
+
+    public function getChats($ids) {
+        $chats = [];
+        foreach ($ids as $id) {
+            $chats[$id] = $this->getChat($id);
+        }
+
+        return $chats;
+    }
 }
