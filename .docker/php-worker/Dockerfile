@@ -124,4 +124,4 @@ ENV PATH /var/www:$PATH
 
 WORKDIR /var/www
 
-CMD ["runsvdir", "-P", "/var/www/services"]
+CMD ["runsvdir", "-P", "/var/www/services/active"]

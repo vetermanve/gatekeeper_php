@@ -15,44 +15,14 @@ use Verse\Run\Controller\SimpleController;
  */
 abstract class TelegramRunController extends SimpleController
 {
+    use TelegramControllerTrait;
 
-    public function text_message() : ?TelegramResponse
-    {
-        return null;
+    public function index() : string {
+        return $this->text_message()->getText();
     }
 
-    public function left_chat_member() : ?TelegramResponse
-    {
-        return null;
-    }
-
-    public function new_chat_members() : ?TelegramResponse
-    {
-        return null;
-    }
-
-    public function edited_message() : ?TelegramResponse
-    {
-        return $this->text_message();
-    }
-
-    public function not_supported() : ?TelegramResponse
-    {
-        return null;
-    }
-
-    public function callback_query() : ?TelegramResponse
-    {
-        return null;
-    }
-
-    public function group_chat_created() : ?TelegramResponse
-    {
-        return null;
-    }
-
-    protected function response() : TelegramResponse {
-        return new TelegramResponse();
+    public function get() : array {
+        return [ "text" => $this->text_message() ];
     }
 
     public function getUpdate() : ?Update
@@ -65,8 +35,4 @@ abstract class TelegramRunController extends SimpleController
         Env::getContainer()->bootstrap(LoggerInterface::class)->debug($text, $data);
     }
 
-    protected function textResponse(?string $text) : TelegramResponse
-    {
-        return $this->response()->setText(empty($text) ? "*Empty message error*" : $text);
-    }
 }

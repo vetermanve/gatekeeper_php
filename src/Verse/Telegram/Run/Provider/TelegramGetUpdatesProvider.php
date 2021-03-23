@@ -160,7 +160,12 @@ class TelegramGetUpdatesProvider extends RequestProviderProto
 
     private function _detectCommand(string $message)
     {
-        $message = trim($message);
+        // cut message to detect command
+        $message = substr(trim($message), 0, 256);
+
+        // replace all white-space characters to detect white spaces;
+        $message = strtr($message, ["\t" => ' ',"\n" => ' ',"\r" => ' ', "\0" => ' ',"\x0B" => ' ']);
+
         if ($message[0] === '/') {
             $pos = strpos($message, ' ');
             if ($pos === false) {

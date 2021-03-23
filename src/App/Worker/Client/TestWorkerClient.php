@@ -9,7 +9,7 @@ use Base\RemoteCall\RemoteCallClient;
 class TestWorkerClient extends RemoteCallClient
 {
 
-    public function getQueueName(): string
+    public function getClientQueueName(): string
     {
         return 'http-worker';
     }

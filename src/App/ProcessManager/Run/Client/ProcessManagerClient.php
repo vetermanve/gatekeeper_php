@@ -12,7 +12,7 @@ class ProcessManagerClient extends RemoteCallClient
 {
     public const DEFAULT_REMOTE_PROCESS_MANAGER = 'process-manager';
 
-    public function getQueueName(): string
+    public function getClientQueueName(): string
     {
         /* @var $config ModularContextProto */
         $config =  Env::getContainer()->bootstrap('config');

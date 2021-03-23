@@ -2,6 +2,6 @@
 /.idea/
 /logs/
 /data/
-/services/*/supervise
+/services/active/*/supervise
 composer.lock
 .env.local

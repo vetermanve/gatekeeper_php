@@ -3,14 +3,15 @@
 namespace App\Landing\Controller;
 
 use App\Landing\Service\GreetingTextProvider;
+use App\Scheduler\Client\SchedulerClient;
 use App\Worker\Client\TestWorkerClient;
 use Verse\Telegram\Run\Controller\TelegramResponse;
 use Verse\Telegram\Run\Controller\TelegramRunController;
 
 class Landing extends TelegramRunController
 {
-    public function get() {
-        return $this->index();
+    public function get() : array {
+        return (array)$this->index();
     }
 
     public function text_message() : TelegramResponse {
@@ -40,6 +41,9 @@ class Landing extends TelegramRunController
 
         $response = new TelegramResponse();
         $response->setText($textProvider->getText(0, $newMembers));
+
+//        $schedulerClient = new SchedulerClient();
+//        $schedulerClient->sendRequest();
 
         return $response;
     }

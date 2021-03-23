@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\TimeWatcher\Run\Storage;
+namespace App\Scheduler\Run\Storage;
 
 
 use Verse\Storage\Data\JBaseDataAdapter;

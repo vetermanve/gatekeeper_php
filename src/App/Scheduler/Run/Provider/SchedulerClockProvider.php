@@ -1,15 +1,15 @@
 <?php
 
 
-namespace App\TimeWatcher\Run\Provider;
+namespace App\Scheduler\Run\Provider;
 
 
-use App\TimeWatcher\Run\RemoteClient\ExternalRemoteClient;
-use App\TimeWatcher\Run\Storage\TimeHitStorage;
+use App\Scheduler\Run\RemoteClient\ExternalRemoteClient;
+use App\Scheduler\Run\Storage\TimeHitStorage;
 use Base\RemoteCall\RemoteCallClient;
 use Verse\Run\Provider\RequestProviderProto;
 
-class TimeWatchingProvider extends RequestProviderProto
+class SchedulerClockProvider extends RequestProviderProto
 {
     private $interval = 1; //seconds
 

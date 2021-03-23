@@ -28,7 +28,7 @@ abstract class RemoteCallClient
      */
     public function __construct()
     {
-        $this->queueName = $this->getQueueName();
+        $this->queueName = $this->getClientQueueName();
     }
 
     private function getRouter() : Router {
@@ -39,7 +39,7 @@ abstract class RemoteCallClient
         return $this->router;
     }
 
-    abstract public function getQueueName() : string;
+    abstract protected function getClientQueueName() : string;
 
     public function sendRequest(string $method, string $path = '/', $query = [], $data = []) : PromiseInterface {
         $requestId = Uuid::v4();

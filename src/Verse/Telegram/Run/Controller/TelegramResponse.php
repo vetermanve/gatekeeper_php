@@ -63,4 +63,5 @@ class TelegramResponse
     {
         return $this->text ?? '';
     }
+
 }

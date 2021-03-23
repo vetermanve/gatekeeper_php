@@ -1,16 +1,18 @@
 <?php
 
 
-namespace App\TimeWatcher\Run\RemoteClient;
+namespace App\Scheduler\Run\RemoteClient;
 
 
 use Base\RemoteCall\RemoteCallClient;
 
 class ExternalRemoteClient extends RemoteCallClient
 {
+
+
     public function getQueueName(): string
     {
-        return '';
+        return $this->queueName;
     }
 
     /**
@@ -22,4 +24,8 @@ class ExternalRemoteClient extends RemoteCallClient
     }
 
 
+    protected function getClientQueueName(): string
+    {
+        return '';
+    }
 }
